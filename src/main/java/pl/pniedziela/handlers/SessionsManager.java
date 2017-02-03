@@ -29,8 +29,8 @@ public class SessionsManager {
     GameTimer gameTimer;
     @Autowired
     PlayerRepository playerRepository;
-
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper mapper;
     private final HashSet<WebSocketSession> sessions = new HashSet<>();
     private final HashMap<WebSocketSession, Player> sessionsPlayers = new HashMap<>();
     private final List<Player> players = new ArrayList<>();

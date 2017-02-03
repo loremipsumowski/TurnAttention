@@ -18,7 +18,8 @@ public class SessionHandler implements WebSocketHandler {
 
     @Autowired
     SessionsManager sessionsManager;
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper mapper;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {

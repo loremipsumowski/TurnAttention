@@ -21,7 +21,8 @@ public class GameTimer {
 
     @Autowired
     SessionsManager sessionManager;
-    ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    ObjectMapper objectMapper;
 
     private static Timer gameTimer = null;
     private static Timer countTimer = null;

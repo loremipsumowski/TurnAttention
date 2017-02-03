@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xml:lang="pl" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Przemysław Niedziela - Uwaga, zakręt!</title>
+    <!--Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
+    <style>
+        .center {
+            text-align: center;
+        }
+
+        .header {
+            font-size: 20px;
+            font-weight: bold;
+            padding: 20px 0 20px 0;
+        }
+
+        fieldset.fieldset-players, fieldset.fieldset-plansza, fieldset.fieldset-chat {
+            border: 1px groove black !important;
+            padding: 0 1.4em 1.4em 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            -webkit-box-shadow: 0px 0px 0px 0px #000;
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+
+        legend.fieldset-players, legend.fieldset-plansza, legend.fieldset-chat {
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            text-align: left !important;
+            width: auto;
+            padding: 0 10px;
+            border-bottom: none;
+        }
+
+        table .tablePlayers {
+            width: 100%;
+        }
+
+        .tablePlayers th {
+            padding-left: 15px;
+        }
+
+        .tablePlayers td {
+            padding-left: 15px;
+        }
+
+        .fieldset-chat #chatInput {
+            width: 100%;
+        }
+
+        .chatPanel {
+            text-align: left;
+            background-color: #eeeeea;
+            font-size: 12px;
+            border: 1px solid black;
+            padding: 0 5px 0 5px;
+            overflow-y: scroll;
+            max-height: 400px;
+        }
+
+        .chatPanel p {
+            margin-bottom: 5px;
+        }
+
+        .chatBg {
+            padding: 0 5% 0 5%;
+        }
+
+        .RED {
+            color: red;
+        }
+
+        .BLUE {
+            color: blue;
+        }
+
+        .GREEN {
+            color: green;
+        }
+
+        .YELLOW {
+            color: yellow;
+        }
+
+        .ORANGE {
+            color: orange;
+        }
+
+        .PINK {
+            color: pink;
+        }
+
+        .PURPLE {
+            color: purple;
+        }
+
+        .WHITE {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-12 center">
+            <div class="col-md-3">
+                <fieldset class="fieldset-players">
+                    <legend class="fieldset-players">Klasyfikacja graczy</legend>
+                    <div class="row">
+                        <div ng-app="angularController" ng-controller="mainController"
+                             class="col-md-10 col-md-offset-1">
+                            <table class="tablePlayers table table-bordered table-striped">
+                                <thead>
+                                <tr>
+                                    <td>
+                                        <a href="#" ng-click="sortType = 'poz'; sortReverse = !sortReverse">
+                                            Lp.
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" ng-click="sortType = 'username'; sortReverse = !sortReverse">
+                                            Użytkownik
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" ng-click="sortType = 'games'; sortReverse = !sortReverse">
+                                            Gier
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="#" ng-click="sortType = 'winners'; sortReverse = !sortReverse">
+                                            Zwycięstw
+                                        </a>
+                                    </td>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr ng-class="line.color" ng-repeat="line in gameRank | orderBy:sortType:sortReverse">
+                                    <td>{{ $index + 1}}</td>
+                                    <td>{{ line.username }}</td>
+                                    <td>{{ line.games }}</td>
+                                    <td>{{ line.winners }}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="col-md-6">
+                <fieldset class="fieldset-plansza">
+                    <legend class="fieldset-plansza">Plansza</legend>
+                    <canvas id="canvasPlansza" width="700" height="700"
+                            style="background-color: black; border:1px solid #d3d3d3;"/>
+                </fieldset>
+            </div>
+            <div class="col-md-3">
+                <fieldset class="fieldset-chat">
+                    <legend class="fieldset-chat">Chat</legend>
+                    <div class="row">
+                        <div class="col-md-12 chatBg">
+                            <input id="chatInput" placeholder="Wyślij wiadomość"/>
+                            <div id="chatPanel" class="chatPanel"></div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script th:inline="javascript">
+    //<![CDATA[
+
+    angular.module('angularController', [])
+
+            .controller('mainController', function ($scope) {
+                $scope.sortType = 'winners'; // set the default sort type
+                $scope.sortReverse = true;  // set the default sort order
+
+                // create the list of sushi rolls
+                $scope.gameRank = [];
+
+                function refreshGameRank() {
+                    $.get("/uwagazakret/rest/players", function (data) {
+                        $scope.gameRank = data;
+                        $scope.$apply();
+                    });
+                }
+
+                var Plansza = {};
+
+                Plansza.canvas = document.getElementById("canvasPlansza");
+                Plansza.ctx = Plansza.canvas.getContext("2d");
+
+                Plansza.resetuj = function () {
+                    Plansza.ctx.beginPath();
+                    Plansza.ctx.fillStyle = "black";
+                    Plansza.ctx.fillRect(0, 0, Plansza.canvas.width, Plansza.canvas.height);
+                    return true;
+                }
+
+                Plansza.rysujNapis = function (tekst) {
+                    if (Plansza.resetuj()) {
+                        Plansza.ctx.beginPath();
+                        Plansza.napisPoczatek = true;
+                        Plansza.ctx.font = "30px Arial";
+                        Plansza.ctx.fillStyle = "white";
+                        Plansza.ctx.textAlign = "center";
+                        Plansza.ctx.fillText(tekst, Plansza.canvas.width / 2, Plansza.canvas.height / 2);
+                    }
+                }
+
+                var snakes = {};
+                Plansza.inicjujWeza = function (username, color, h, v) {
+                    Plansza.ctx.beginPath();
+                    Plansza.ctx.moveTo(h, v);
+                    Plansza.ctx.strokeStyle = color;
+                    Plansza.ctx.lineTo(h, v);
+                    Plansza.ctx.stroke();
+                    snakes[username] = {};
+                    snakes[username].color = color;
+                    snakes[username].h = h;
+                    snakes[username].v = v;
+
+                }
+
+                Plansza.rysujWeza = function (username, h, v) {
+                    Plansza.ctx.beginPath();
+                    Plansza.ctx.moveTo(snakes[username].h, snakes[username].v);
+                    Plansza.ctx.strokeStyle = snakes[username].color;
+                    Plansza.ctx.lineTo(h, v);
+                    Plansza.ctx.stroke();
+                    snakes[username].h = h;
+                    snakes[username].v = v;
+                }
+
+
+                /*ctx.moveTo(55, 55);
+                 ctx.strokeStyle = "red";
+                 var a = 50, b = 50;
+                 setInterval(function () {
+                 ctx.lineTo(a, b);
+                 ctx.stroke();
+                 a += 1;
+                 b += 0;
+                 }, 20);*/
+
+                var Console = {};
+                Console.socket = null;
+                Console.playerNickname = [[${playerNickname}]];
+
+                Console.log = (function (message) {
+                    var console = document.getElementById('chatPanel');
+                    var p = document.createElement('p');
+                    p.className = "chatMessage";
+                    p.innerHTML = message;
+                    console.insertBefore(p, console.firstChild);
+                    while (console.childNodes.length > 25) {
+                        console.removeChild(console.lastChild);
+                    }
+                });
+
+                Console.connect = function (host) {
+
+                    if ('WebSocket' in window) {
+                        Console.socket = new WebSocket(host);
+                    } else if ('MozWebSocket' in window) {
+                        Console.socket = new MozWebSocket(host);
+                    } else {
+                        alert("Ta przeglądarka nie obsługuje WebSocket!");
+                        return;
+                    }
+
+                    Console.socket.onopen = function () {
+
+                        Console.socket.send(JSON.stringify({type: 'NEWPLAYER', username: Console.playerNickname}));
+                        Console.socket.send(JSON.stringify({
+                            type: 'MESSAGE',
+                            message: Console.playerNickname + ' dołączył do gry!'
+                        }));
+                        document.getElementById('chatInput').onkeydown = function (event) {
+                            if (event.keyCode == 13) {
+                                Console.socket.send(JSON.stringify({
+                                    type: 'MESSAGE',
+                                    message: Console.playerNickname + ': ' + $("#chatInput").val()
+                                }));
+                                $("#chatInput").val("");
+                            }
+                        };
+
+                        refreshGameRank();
+                        //Plansza.napisPoczatek();
+                    }
+
+                    Console.socket.onclose = function () {
+
+                        Console.socket.send(Console.playerNickname + " opuścił grę.");
+                    }
+
+                    Console.socket.onmessage = function (message) {
+
+                        var json = JSON.parse(message.data);
+                        if (json.type == 'MESSAGE') {
+                            Console.log(json.message);
+                        } else if (json.type == 'TEXTTOBOARD') {
+                            Plansza.rysujNapis(json.message);
+                        } else if (json.type == 'INITSNAKES') {
+                            var initSnakes = JSON.parse(json.message);
+                            Plansza.resetuj();
+                            for (var i = 0; i < initSnakes.length; i++) {
+                                var waz = initSnakes[i];
+                                Plansza.inicjujWeza(waz["username"], waz["color"], waz["h"], waz["v"]);
+                            }
+                        } else if (json.type == 'DRAWSNAKES') {
+                            var drawSnakes = JSON.parse(json.message);
+                            for (var i = 0; i < drawSnakes.length; i++) {
+                                var waz = drawSnakes[i];
+                                Plansza.rysujWeza(waz["username"], waz["h"], waz["v"]);
+                            }
+                        } else if (json.type = 'ENDROUND'){
+                            refreshGameRank();
+                        }
+                    }
+                }
+
+                Console.connect('ws://' + window.location.host + '/uwagazakret/actions');
+
+
+                document.body.onkeydown = function (event) {
+
+                    if (event.keyCode == 38) {
+                        Console.socket.send(JSON.stringify({
+                            type: 'GAMEEVENT',
+                            message: 'UP'
+                        }));
+                    } else if (event.keyCode == 39) {
+                        Console.socket.send(JSON.stringify({
+                            type: 'GAMEEVENT',
+                            message: 'RIGHT'
+                        }));
+                    } else if (event.keyCode == 40) {
+                        Console.socket.send(JSON.stringify({
+                            type: 'GAMEEVENT',
+                            message: 'DOWN'
+                        }));
+                    } else if (event.keyCode == 37) {
+                        Console.socket.send(JSON.stringify({
+                            type: 'GAMEEVENT',
+                            message: 'LEFT'
+                        }));
+                    } else if (event.keyCode == 32) {
+                        Console.socket.send(JSON.stringify({
+                            type: 'GAMEEVENT',
+                            message: 'SPACE'
+                        }));
+                    } else if (event.keyCode == 16) {
+
+                        if (!$("#chatInput").is(":focus")) {
+                            $("#chatInput").focus();
+                        }
+                    }
+                }
+            })
+    //]]>
+</script>
+</body>
+</html>

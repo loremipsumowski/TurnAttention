@@ -8,7 +8,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import pl.pniedziela.entities.Player;
-import pl.pniedziela.entities.PlayerRepository;
+import pl.pniedziela.repositories.PlayerRepository;
 import pl.pniedziela.entities.WSMessage;
 import pl.pniedziela.enums.Colors;
 import pl.pniedziela.enums.Directions;

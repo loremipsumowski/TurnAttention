@@ -52,7 +52,7 @@ public class GameTimer {
 
     private void startGameTimer() {
         this.checkedFields = new int[BOARD_WIDTH][BOARD_HEIGHT];
-        roundPlayersPositionsAndDirections();
+        randomPlayersPositionsAndDirections();
         try {
             sessionManager.sendMessageToAllSessions(MessageType.INITSNAKES, objectMapper.writeValueAsString(sessionManager.getPlayers()));
         } catch (JsonProcessingException e) {
@@ -84,7 +84,7 @@ public class GameTimer {
                             player.decrementH();
                             break;
                     }
-                    if (player.getH() >= 0 && player.getH() <= BOARD_WIDTH - 1 && player.getV() >= 0 && player.getV() <= BOARD_HEIGHT - 1 && checkedFields[player.getH()][player.getV()] != 1) {
+                    if (checkPlayerIsOnBoard(player) && checkedFields[player.getH()][player.getV()] != 1) {
                         checkedFields[player.getH()][player.getV()] = 1;
                     } else {
                         player.setPlaying(false);
@@ -105,7 +105,11 @@ public class GameTimer {
         }, 0, 10);
     }
 
-    private void roundPlayersPositionsAndDirections() {
+    private boolean checkPlayerIsOnBoard(Player player) {
+        return player.getH() >= 0 && player.getH() <= BOARD_WIDTH - 1 && player.getV() >= 0 && player.getV() <= BOARD_HEIGHT - 1;
+    }
+
+    private void randomPlayersPositionsAndDirections() {
         for (Player player : sessionManager.getPlayers()) {
             player.setPlaying(true);
             player.addGame();
